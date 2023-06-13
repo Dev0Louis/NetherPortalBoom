@@ -4,7 +4,7 @@
   "package": "org.d1p4k.netherportalboom.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "TestMixin"
+    "NetherPortalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

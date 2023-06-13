@@ -1,9 +1,8 @@
 package org.d1p4k.netherportalboom.mixin;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -19,16 +18,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(NetherPortal.class)
-public class TestMixin {
-
-    @Shadow @Final private Direction.Axis axis;
-
+public class NetherPortalMixin {
     @Shadow private @Nullable BlockPos lowerCorner;
 
     @Shadow @Final private WorldAccess world;
 
     @Inject(method = "createPortal", at = @At("HEAD"), cancellable = true)
-    public void mixin(CallbackInfo ci) {
+    public void cancelPortalCreationAndExplode(CallbackInfo ci) {
         for (int x = -5; x < 5; x++) {
             for (int y = -5; y < 5; y++) {
                 for (int z = -5; z < 5; z++) {
@@ -38,8 +34,8 @@ public class TestMixin {
                 }
             }
         }
-        if(world instanceof World) {
-            ((World) world).createExplosion(null, DamageSource.badRespawnPoint(new Vec3d(0,0,0)),
+        if(world instanceof ServerWorld world) {
+            world.createExplosion(null, world.getDamageSources().badRespawnPoint(new Vec3d(0,0,0)),
                     new ExplosionBehavior(), lowerCorner.getX(), lowerCorner.getY(), lowerCorner.getZ(),
                     NetherPortalBoom.explosionRadius(), true, World.ExplosionSourceType.BLOCK);
         }
